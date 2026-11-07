@@ -1,0 +1,3 @@
+# Root is allowed in Devcontainer
+DS-0002
+- .devcontainer/Dockerfile

@@ -1,3 +1,9 @@
+# macOS
+.DS_Store
+
+# Linux / Devcontainer
+.Trash-0
+
 # Logs
 logs
 *.log
