@@ -20,3 +20,6 @@ RUN mkdir -p ~/.devcontainer/cmd-history
 # Install Trivy
 ARG TRIVY_VERSION=0.76.0
 RUN curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v$TRIVY_VERSION
+
+# Install OpenCode
+RUN curl -fsSL https://opencode.ai/v2/install | bash
