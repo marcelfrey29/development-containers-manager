@@ -1,0 +1,21 @@
+{
+    "name": "DCM",
+    "build": {
+        "dockerfile": "Dockerfile",
+    },
+    "mounts": [
+        // Command history persistence and sharing across Devcontainers
+        "source=${localEnv:HOME}${localEnv:USERPROFILE}/.devcontainer/cmd-history,target=/root/.devcontainer/cmd-history,type=bind",
+    ],
+    "customizations": {
+        "zed": {
+            "extensions": ["editorconfig", "git-firefly", "dockerfile"],
+        },
+        "vscode": {
+            "extensions": [
+                "ms-vscode-remote.remote-containers",
+                "ms-azuretools.vscode-docker",
+            ],
+        },
+    },
+}

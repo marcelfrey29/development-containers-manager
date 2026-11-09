@@ -1,0 +1,30 @@
+name: SAST
+
+on:
+    push:
+        branches: ["main"]
+    pull_request:
+        branches: ["main"]
+    workflow_dispatch:
+    workflow_call:
+
+jobs:
+    trivy:
+        name: SAST (Trivy)
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: .
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # 7.0.1
+            - name: Run Trivy
+              uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # 0.36.0
+              with:
+                  scan-type: "fs"
+                  scan-ref: "."
+                  scanners: "vuln,secret,misconfig"
+                  severity: "CRITICAL,HIGH"
+                  exit-code: "1"
+                  format: "table"
+                  trivyignores: ".trivyignore"
