@@ -20,3 +20,5 @@ jobs:
               uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # 7.0.1
             - name: Validate dcm Script
               run: bash -n dcm
+            - name: Validate install.sh Script
+              run: bash -n install.sh

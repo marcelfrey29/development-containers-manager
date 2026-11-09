@@ -1,6 +1,11 @@
 # Development Containers Manager
 
+[![CI](https://github.com/marcelfrey29/development-containers-manager/actions/workflows/CI.yml/badge.svg)](https://github.com/marcelfrey29/development-containers-manager/actions/workflows/CI.yml)
+[![SAST](https://github.com/marcelfrey29/development-containers-manager/actions/workflows/SAST.yml/badge.svg)](https://github.com/marcelfrey29/development-containers-manager/actions/workflows/SAST.yml)
+
 **Manage Devcontainers from the Terminal: One container per project, IDE-independent, full (Agent) isolation.**
+
+## Installation
 
 `dcm` supports macOS and Linux. To use it, install the following tools:
 
@@ -8,6 +13,10 @@
 - [`jq`](https://jqlang.org/)
 - [Devcontainer CLI](https://github.com/devcontainers/cli), which requires Node.js: `brew install devcontainer` or `npm install -g @devcontainers/cli`
 - [Zed](https://zed.dev/) (v0.232 or newer, with `zed` in your `PATH`) or [VS Code](https://code.visualstudio.com/) with the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) and `code` in your `PATH` — only needed for `dcm editor`
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/marcelfrey29/development-containers-manager/main/install.sh | bash
+```
 
 ## Usage
 
