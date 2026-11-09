@@ -1,0 +1,22 @@
+name: CI
+
+on:
+    push:
+        branches: ["main"]
+    pull_request:
+        branches: ["main"]
+    workflow_dispatch:
+    workflow_call:
+
+jobs:
+    trivy:
+        name: CI
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: .
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v4
+            - name: Validate dcm.sh
+              run: bash -n dcm.sh
