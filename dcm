@@ -14,6 +14,7 @@ DOTFILES_REPO=""
 DOTFILES_PATH=""
 SHELL_CMD="bash"
 EDITOR_DEFAULT=""
+MOUNT_ARGS=()
 
 CONTAINER_ID=""
 REMOTE_FOLDER=""
@@ -46,7 +47,8 @@ definition. exec, attach and editor start the container if it is not running.
 
 Config: ~/.devcontainer/dcm-config.json
   { "containerEngine": "docker|podman", "dotfiles": { "repo": "<url>", "path": "<target>" }, "shell": "bash",
-    "editor": { "name": "zed|vscode" } }
+    "editor": { "name": "zed|vscode" },
+    "mounts": [{ "hostPath": "<host path>", "containerPath": "<container path>" }] }
 EOF
 }
 
@@ -75,6 +77,45 @@ load_config() {
     docker | podman) ;;
     *) die "Invalid containerEngine '$ENGINE' in $CONFIG_FILE (use docker or podman)" ;;
   esac
+  load_mounts
+}
+
+# Read the user-specific mounts and turn them into 'devcontainer up --mount' arguments.
+load_mounts() {
+  local count i host_path container_path
+  jq -e '(.mounts // []) as $m
+    | ($m | type == "array")
+      and all($m[];
+        type == "object"
+        and (.hostPath | type == "string" and length > 0)
+        and (.containerPath | type == "string" and length > 0))' \
+    "$CONFIG_FILE" >/dev/null 2>&1 ||
+    die "Invalid mounts in $CONFIG_FILE (expected an array of objects with non-empty 'hostPath' and 'containerPath')"
+
+  MOUNT_ARGS=()
+  count=$(jq -r '(.mounts // []) | length' "$CONFIG_FILE") || die "Cannot read $CONFIG_FILE"
+  for ((i = 0; i < count; i++)); do
+    host_path=$(jq -r --argjson i "$i" '.mounts[$i].hostPath' "$CONFIG_FILE") || die "Cannot read $CONFIG_FILE"
+    container_path=$(jq -r --argjson i "$i" '.mounts[$i].containerPath' "$CONFIG_FILE") || die "Cannot read $CONFIG_FILE"
+
+    case "$host_path" in
+      "~") host_path="$HOME" ;;
+      "~/"*) host_path="$HOME/${host_path#"~/"}" ;;
+    esac
+    case "$host_path" in
+      /*) ;;
+      *) die "Invalid hostPath '$host_path' in mounts[$i] of $CONFIG_FILE (use an absolute path or ~/...)" ;;
+    esac
+    case "$container_path" in
+      /*) ;;
+      *) die "Invalid containerPath '$container_path' in mounts[$i] of $CONFIG_FILE (use an absolute path)" ;;
+    esac
+    case "$host_path$container_path" in
+      *,*) die "Invalid mounts[$i] in $CONFIG_FILE (paths containing commas are not supported)" ;;
+    esac
+
+    MOUNT_ARGS+=(--mount "type=bind,source=$host_path,target=$container_path")
+  done
 }
 
 resolve_path() { # [path] -> physical absolute path
@@ -111,6 +152,9 @@ warn_if_many() { # ids
 start_container() { # path
   local path="$1" out="" rc=0 msg=""
   local args=(up --workspace-folder "$path" --docker-path "$ENGINE")
+  if [ "${#MOUNT_ARGS[@]}" -gt 0 ]; then
+    args+=("${MOUNT_ARGS[@]}")
+  fi
   if [ -n "$DOTFILES_REPO" ]; then
     args+=(--dotfiles-repository "$DOTFILES_REPO")
   fi

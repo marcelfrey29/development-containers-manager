@@ -57,17 +57,21 @@ Configuration Location: `~/.devcontainer/dcm-config.json`:
     "containerEngine": "docker|podman",
     "dotfiles": { "repo": "<url>", "path": "<target>" },
     "shell": "bash|zsh",
-    "editor": { "name": "zed|vscode" }
+    "editor": { "name": "zed|vscode" },
+    "mounts": [{ "hostPath": "<host path>", "containerPath": "<container path>" }]
 }
 ```
 
-| Setting           | Description                                                              | Default                                 |
-| ----------------- | ------------------------------------------------------------------------ | --------------------------------------- |
-| `containerEngine` | The container engine to use: `docker` or `podman`                        | `docker`                                |
-| `dotfiles.repo`   | URL of the dotfiles repository to install.                               | _(none)_                                |
-| `dotfiles.path`   | The path in the Devcontainer where the dotfiles repository is installed. | `~/dotfiles` (Devcontainer CLI Default) |
-| `shell`           | Shell used when launching an interactive session with `dcm attach`       | `bash`                                  |
-| `editor.name`     | Your default editor (e.g. for `dcm editor`): `zed` or `vscode`           | _(none)_                                |
+| Setting           | Description                                                                                                                                    | Default                                 |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| `containerEngine` | The container engine to use: `docker` or `podman`                                                                                              | `docker`                                |
+| `dotfiles.repo`   | URL of the dotfiles repository to install.                                                                                                     | _(none)_                                |
+| `dotfiles.path`   | The path in the Devcontainer where the dotfiles repository is installed.                                                                       | `~/dotfiles` (Devcontainer CLI Default) |
+| `shell`           | Shell used when launching an interactive session with `dcm attach`                                                                             | `bash`                                  |
+| `editor.name`     | Your default editor (e.g. for `dcm editor`): `zed` or `vscode`                                                                                 | _(none)_                                |
+| `mounts`          | Additional bind mounts added to every container, on top of the project's `devcontainer.json` mounts. `hostPath` may start with `~/`; `containerPath` must be absolute. | _(none)_        |
+
+Mounts are applied when a container is created or recreated. Run `dcm recreate` after changing them.
 
 ## Development
 
